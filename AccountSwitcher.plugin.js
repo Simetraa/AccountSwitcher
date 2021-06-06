@@ -318,9 +318,11 @@ module.exports = (() => {
 					console.log("Logging in as " + account.name);
 					if(account.id == UserStore.getCurrentUser().id) return Toasts.show("Already using account " + account.name, {type: Toasts.ToastTypes.warning});
 					console.log("Logging in as " + account.name);
+					BdApi.findModuleByProps("updateRemoteSettings").updateRemoteSettings({status: "invisible"});
 					this.requirePassword().then(r => {
 						const token = password == null ? account.token : this.decrypt(account.token, password);
 						AccountManager.loginToken(this.decrypt(token, account.id));
+						window.setTimeout(BdApi.findModuleByProps("updateRemoteSettings").updateRemoteSettings({status: "online"}),10000);
 						window.setTimeout(this.updateAvatars, 5000);
 						this.settings.pluginsToRestart.forEach(pl => {
 							if(BdApi.Plugins.isEnabled(pl)){
